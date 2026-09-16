@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мебельный магазин "УютDom"</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>УютDom</h1>
+                <p>Мебель для вашего комфорта</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#hero">Главная</a></li>
+                    <li><a href="#advantages">Преимущества</a></li>
+                    <li><a href="#catalog">Каталог</a></li>
+                    <li><a href="#products">Товары</a></li>
+                    <li><a href="#about">О нас</a></li>
+                    <li><a href="#contacts">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Главный экран -->
+    <section id="hero" class="hero">
+        <div class="container">
+            <h2>Создайте свой идеальный интерьер</h2>
+            <p>Современная мебель высокого качества по доступным ценам</p>
+            <a href="#contacts" class="btn-primary">Оставить заявку</a>
+        </div>
+    </section>
+
+    <!-- Преимущества -->
+    <section id="advantages" class="advantages">
+        <div class="container">
+            <h2>Почему выбирают нас</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Собственное производство</h3>
+                    <p>Контроль качества на всех этапах</p>
+                </div>
+                <div class="card">
+                    <h3>Быстрая доставка</h3>
+                    <p>По Москве и области за 1-2 дня</p>
+                </div>
+                <div class="card">
+                    <h3>Профессиональная сборка</h3>
+                    <p>Бесплатная сборка при заказе от 30 000 ₽</p>
+                </div>
+                <div class="card">
+                    <h3>Гарантия 2 года</h3>
+                    <p>На всю мебель предоставляем гарантию</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Категории -->
+    <section id="catalog" class="catalog">
+        <div class="container">
+            <h2>Категории мебели</h2>
+            <div class="grid">
+                <a href="#" class="grid-item">
+                    <img src="images/guestroom.jpg" alt="Гостиные">
+                    <h3>Гостиные</h3>
+                </a>
+                <a href="#" class="grid-item">
+                    <img src="images/bedroom.jpg" alt="Спальни">
+                    <h3>Спальни</h3>
+                </a>
+                <a href="#" class="grid-item">
+                    <img src="images/kitchen.jpg" alt="Кухни">
+                    <h3>Кухни</h3>
+                </a>
+                <a href="#" class="grid-item">
+                    <img src="images/office.jpg" alt="Офис">
+                    <h3>Офис</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Популярные товары -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2>Популярные товары</h2>
+            <div class="cards">
+                <div class="card">
+                    <img src="images/sofa-modern.jpg" alt="Диван">
+                    <h3>Диван "Модерн"</h3>
+                    <p class="price">45 000 ₽</p>
+                    <a href="#" class="btn-secondary">Купить</a>
+                </div>
+                <div class="card">
+                    <img src="images/bed-eco.jpg" alt="Кровать">
+                    <h3>Кровать "Эко"</h3>
+                    <p class="price">32 000 ₽</p>
+                    <a href="#" class="btn-secondary">Купить</a>
+                </div>
+                <div class="card">
+                    <img src="images/wardrobe-classic.jpg" alt="Шкаф">
+                    <h3>Шкаф "Классик"</h3>
+                    <p class="price">28 000 ₽</p>
+                    <a href="#" class="btn-secondary">Купить</a>
+                </div>
+                <div class="card">
+                    <img src="images/table-minimal.jpg" alt="Стол">
+                    <h3>Стол "Минимал"</h3>
+                    <p class="price">18 000 ₽</p>
+                    <a href="#" class="btn-secondary">Купить</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- О нас -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2>О компании</h2>
+            <p>Мы создаем качественную мебель уже более 10 лет. Наша команда профессионалов использует только экологически чистые материалы и современные технологии production. Мы предлагаем индивидуальный подход к каждому клиенту, гибкую систему скидок и бесплатную доставку по Москве.</p>
+        </div>
+    </section>
+
+    <!-- Форма заявки и контакты -->
+    <section id="contacts" class="contacts">
+        <div class="container">
+            <h2>Оставьте заявку</h2>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Имя *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Телефон *</label>
+                    <input type="tel" id="phone" name="phone" pattern="[0-9]{11}" placeholder="+7XXXXXXXXXX" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="message">Сообщение</label>
+                    <textarea id="message" name="message" rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Отправить заявку</button>
+                <p id="formStatus"></p>
+            </form>
+            <div class="info">
+                <h3>Наши контакты</h3>
+                <p>📍 Москва, ул. Примерная, д. 10</p>
+                <p>📞 +7 (495) 123-45-67</p>
+                <p>✉️ info@uytdom.ru</p>
+                <p>🕒 Пн-Вс: 9:00 – 21:00</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 УютDom. Все права защищены.</p>
+            <div class="social">
+                <a href="#">ВК</a>
+                <a href="#">Инстаграм</a>
+                <a href="#">Телеграм</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
