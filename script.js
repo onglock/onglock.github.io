@@ -1,3 +1,43 @@
+// ===== Lenis — плавный скролл =====
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+let lenis = null;
+// window.Lenis проверяем на случай, если CDN не отдал библиотеку —
+// без этой проверки весь файл упал бы вместе с валидацией формы
+if (window.Lenis) {
+    lenis = new Lenis({
+        lerp: 0.1,
+        duration: 1.2,
+        smoothWheel: !reduceMotion,   // при prefers-reduced-motion оставляем нативный скролл
+        smoothTouch: false,           // на тач-устройствах (в т.ч. iOS) — нативный скролл
+    });
+
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+}
+
+// Высота fixed-шапки, чтобы якорь не уезжал под неё
+function headerOffset() {
+    const header = document.querySelector('header');
+    return header ? header.offsetHeight : 0;
+}
+
+function scrollToTarget(el) {
+    const offset = -headerOffset();
+    if (lenis) {
+        lenis.scrollTo(el, { offset: offset, immediate: reduceMotion });
+        return;
+    }
+    window.scrollTo({
+        top: el.getBoundingClientRect().top + window.scrollY + offset,
+        behavior: reduceMotion ? 'auto' : 'smooth'
+    });
+}
+
 // Плавная прокрутка по якорям
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -5,12 +45,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
         const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-            window.scrollTo({
-                top: targetElement.offsetTop - 80, // compensate for header
-                behavior: 'smooth'
-            });
-        }
+        if (targetElement) scrollToTarget(targetElement);
     });
 });
 
@@ -73,97 +108,82 @@ function setError(inputElement, message) {
     const statusEl = document.getElementById('formStatus');
     statusEl.textContent = message;
     statusEl.style.color = 'var(--error)';
-    // Прокрутка к первой ошибке
+    // Прокрутка к первой ошибке (через Lenis, если он есть)
     if (!window.__errorScrolled) {
         window.__errorScrolled = true;
-        formGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (lenis) {
+            lenis.scrollTo(formGroup, { offset: -headerOffset() - 20, immediate: reduceMotion });
+        } else {
+            formGroup.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+        }
         setTimeout(() => { window.__errorScrolled = false; }, 1000);
     }
 }
 
-// Добавление интерактивности карточек при наведении (дополнительный эффект)
-document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left; // x position within the element
-        const y = e.clientY - rect.top; // y position within the element
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const angleX = (y - centerY) / 10; // чувствительность по Y
-        const angleY = (centerX - x) / 10; // чувствительность по X (инвертируем)
-        
-        card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateY(-5px)`;
-    });
-    
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+// ===== Scroll-reveal: блоки секций выезжают снизу с blur, карточки — каскадом =====
+const REVEAL_SECTIONS = ['#advantages', '#catalog', '#products', '#about', '#contacts'];
+const REVEAL_STEP = 0.08;   // stagger между блоками внутри секции, s
+const revealItems = [];
+
+REVEAL_SECTIONS.forEach(selector => {
+    const scope = document.querySelector(selector);
+    if (!scope) return;
+    // Блоки секции: заголовок, карточки/категории, поля формы, панель контактов
+    scope.querySelectorAll('h2, .card, .grid-item, .form-group, .info').forEach((el, i) => {
+        revealItems.push({ el: el, delay: Math.min(i, 7) * REVEAL_STEP });
     });
 });
 
-// Анимация появления элементов при скролле
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const animatedEls = document.querySelectorAll('.hero h2, .hero p, .btn-primary, .section-title, .card, .grid-item, .form-group, .info p');
-
-// Показывает всё, что уже попало в зону видимости.
-// Работает и как основной механизм (браузеры без IntersectionObserver),
-// и как страховка: контент не должен оставаться невидимым никогда.
-function revealVisible() {
-    animatedEls.forEach(el => {
-        if (el.classList.contains('animate-in')) return;
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight - 50 && rect.bottom > 0) {
-            el.classList.add('animate-in');
-        }
-    });
+function showAllReveal() {
+    revealItems.forEach(({ el }) => el.classList.add('reveal', 'revealed'));
 }
 
-if ('IntersectionObserver' in window) {
+if (reduceMotion) {
+    // Анимаций нет — контент виден сразу
+    showAllReveal();
+} else if ('IntersectionObserver' in window) {
+    revealItems.forEach(({ el, delay }) => {
+        el.classList.add('reveal');
+        el.style.transitionDelay = delay + 's';
+    });
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-in');
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            el.classList.add('revealed');
+            // Снимаем stagger-задержку, иначе она тормозила бы hover-переходы карточки
+            setTimeout(() => { el.style.transitionDelay = ''; }, (parseFloat(el.style.transitionDelay) + 0.9) * 1000);
+            observer.unobserve(el);   // проигрывается один раз
+        });
+    }, { threshold: 0, rootMargin: '0px 0px -20% 0px' });   // срабатывание, когда верх блока доходит до 80% экрана
+
+    revealItems.forEach(({ el }) => observer.observe(el));
+
+    // Страховка: контент не должен оставаться невидимым никогда.
+    // Условие — «блок дошёл до линии 80% или уже выше неё»: так подхватываются
+    // и секции, которые проскроллили прыжком (иначе они остались бы скрытыми).
+    function revealVisible() {
+        revealItems.forEach(({ el }) => {
+            if (el.classList.contains('revealed')) return;
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 0.8) {
+                el.classList.add('revealed');
             }
         });
-    }, observerOptions);
-
-    // Добавляем классы для анимации
-    animatedEls.forEach(el => observer.observe(el));
+    }
+    window.addEventListener('scroll', revealVisible, { passive: true });
+    window.addEventListener('resize', revealVisible);
+    window.addEventListener('load', () => setTimeout(revealVisible, 300));
+    setTimeout(revealVisible, 1000);
 } else {
     // Браузер без IntersectionObserver — показываем всё сразу
-    animatedEls.forEach(el => el.classList.add('animate-in'));
+    showAllReveal();
 }
 
-// Страховка на случай, если observer не сработал (или страница открыта не в активной вкладке)
-window.addEventListener('scroll', revealVisible, { passive: true });
-window.addEventListener('resize', revealVisible);
-window.addEventListener('load', () => setTimeout(revealVisible, 300));
-setTimeout(revealVisible, 1000);
-
-// Добавляем стили для анимации через JS (можно вынести в CSS, но так проще)
+// Стили состояния ошибки формы (палитра — из :root)
 const style = document.createElement('style');
 style.textContent = `
-    /* Базовое (скрытое) состояние. :where() даёт нулевую специфичность, поэтому
-       .animate-in ниже всегда его переопределяет — иначе элементы (в т.ч. .hero h2,
-       .hero p, .info p со специфичностью выше) навсегда оставались бы opacity: 0.
-       В старом браузере без :where() правило просто не применится и контент виден сразу. */
-    :where(.hero h2, .hero p, .btn-primary, .section-title, .card, .grid-item, .form-group, .info p) {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    /* Видимое состояние */
-    .animate-in {
-        opacity: 1;
-        transform: translateY(0);
-        transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-    
     .form-group.error input,
     .form-group.error textarea {
         border-color: var(--error) !important;

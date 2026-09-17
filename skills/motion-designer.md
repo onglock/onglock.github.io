@@ -22,7 +22,7 @@
   --bg-footer:  #050505;                  /* подвал и «дна» страницы */
   --text:       #E8E6E0;                  /* тёплый почти белый, НЕ чистый белый */
   --heading:    #FFFFFF;                  /* только заголовки */
-  --accent:     #8B9A62;                  /* оливково-шалфейный: один акцент (осветлён под металлик) */
+  --accent:     #D4AF37;                  /* классический золотой: один акцент */
   --muted:      #B8B5AE;                  /* подписи, второстепенный текст */
   --ghost:      rgba(232, 230, 224, 0.08);/* гигантские призрачные заголовки */
   --divider:    rgba(255, 255, 255, 0.35);/* разделители строк */
@@ -222,16 +222,18 @@ gsap.utils.toArray("[data-reveal]").forEach((section) => {
 
 ## 6. Шапка
 
-- Всегда `position: fixed; background: transparent;`.
-- При скролле фон **не** меняется, blur **не** включается, шапка **не** прячется.
-  Контент проезжает под ней.
-- Это осознанное решение по референсу. Не делать «стеклянный остров», не делать смену фона,
-  не добавлять `backdrop-filter`, не уменьшать высоту при скролле.
+- Шапка — fixed и матовое стекло: полупрозрачный тёмный фон (`--bg` с opacity 0.6)
+  + `backdrop-filter: blur(20px) saturate(180%)`. Контент проезжает под шапкой и размывается.
+- Снизу — тонкая граница `rgba(255, 255, 255, 0.1)`.
+- Высота при скролле не меняется, шапка не прячется.
 
 ```css
 .site-header {
   position: fixed; inset: 0 0 auto 0; z-index: 100;
-  background: transparent; border: 0; backdrop-filter: none;
+  background: rgba(19, 20, 21, 0.6);                          /* --bg при 60% */
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   height: 80px;
 }
 .marquee { position: fixed; top: 0; left: 0; right: 0; height: 56px; z-index: 101; background: transparent; }

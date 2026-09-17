@@ -9,7 +9,7 @@
     --bg-footer:  #050505;                  /* подвал и «дна» страницы */
     --text:       #E8E6E0;                  /* тёплый почти белый, для контраста */
     --heading:    #FFFFFF;                  /* только заголовки */
-    --accent:     #8B9A62;                  /* оливково-шалфейный: один акцент (осветлён под металлик) */
+    --accent:     #D4AF37;                  /* классический золотой: один акцент */
     --muted:      #B8B5AE;                  /* подписи, второстепенный текст */
     --ghost:      rgba(232, 230, 224, 0.08);/* призрачные заголовки, тонкие рамки */
     --divider:    rgba(255, 255, 255, 0.35);/* разделители строк */
@@ -19,6 +19,16 @@
     --surface:        linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0.15) 100%), #1D1F22;
     --surface-border: rgba(232, 230, 224, 0.10);
     --surface-sheen:  inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+    /* Переходы карточек: reveal-свойства 0.8s (opacity/translate/filter)
+       + hover-свойства 0.3s (transform/box-shadow/border-color).
+       Один токен, чтобы reveal и hover не перебивали друг друга. */
+    --card-transition: transform 0.3s var(--ease-soft),
+                       box-shadow 0.3s var(--ease-soft),
+                       border-color 0.3s var(--ease-soft),
+                       opacity 0.8s var(--ease-soft),
+                       translate 0.8s var(--ease-soft),
+                       filter 0.8s var(--ease-soft);
 
     /* Easing и тайминги */
     --ease-panel: cubic-bezier(0.44, 0, 0.56, 1);  /* шапка, маркиза, верхние полосы */
@@ -87,18 +97,18 @@ p {
     margin-bottom: 1rem;
 }
 
-/* Шапка — fixed и прозрачная: контент проезжает под ней (скилл §6) */
+/* Шапка — fixed, матовое стекло: контент проезжает под ней и размывается */
 header {
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    background: rgba(19, 20, 21, 0.6);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     width: 100%;
     z-index: 1000;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 header .container {
@@ -197,7 +207,7 @@ header nav ul li a:hover::after {
 .btn-primary {
     display: inline-block;
     background: var(--accent);
-    color: var(--heading);
+    color: var(--bg);                       /* тёмный текст: белый на золотом нечитаем */
     padding: 12px 30px;
     text-decoration: none;
     border-radius: 50px;
@@ -212,7 +222,7 @@ header nav ul li a:hover::after {
 
 .btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(139, 154, 98, 0.4);   /* var(--accent) в тени */
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4);   /* var(--accent) в тени */
 }
 
 /* Преимущества */
@@ -228,16 +238,17 @@ header nav ul li a:hover::after {
 
 .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(4, 1fr);   /* 4 преимущества = ровно один ряд */
     gap: 25px;
 }
 
+/* Карточка: hover-подъём по единому стандарту (скилл §5) */
 .card {
     background: var(--surface);
     border-radius: 15px;
     padding: 25px;
     text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: var(--card-transition);
     border: 1px solid var(--surface-border);
     box-shadow: var(--surface-sheen);
 }
@@ -254,7 +265,7 @@ header nav ul li a:hover::after {
 }
 
 .card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-7px);
     box-shadow: var(--surface-sheen), 0 15px 30px rgba(0, 0, 0, 0.3);
     border-color: var(--accent);
 }
@@ -288,14 +299,15 @@ header nav ul li a:hover::after {
     background: var(--surface);
     border-radius: 12px;
     overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: var(--card-transition);
     border: 1px solid var(--surface-border);
     box-shadow: var(--surface-sheen);
 }
 
+/* Тот же подъём, что у карточек товаров: -7px + тень + золотая рамка */
 .grid-item:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--surface-sheen), 0 10px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-7px);
+    box-shadow: var(--surface-sheen), 0 15px 30px rgba(0, 0, 0, 0.3);
     border-color: var(--accent);
 }
 
@@ -334,12 +346,11 @@ header nav ul li a:hover::after {
     border-radius: 12px;
     overflow: hidden;
     text-align: center;
-    transition: transform 0.3s;
+    transition: var(--card-transition);
 }
 
-.products .card:hover {
-    transform: translateY(-5px);
-}
+/* Подъём -10px + тень + золотая рамка — общий стандарт из .card:hover,
+   отдельного переопределения для товаров больше нет */
 
 .products .card img {
     width: 100%;
@@ -377,7 +388,8 @@ header nav ul li a:hover::after {
 
 .btn-secondary:hover {
     background: var(--accent);
-    color: var(--heading);
+    color: var(--bg);                   /* тёмный текст на золоте: белый давал 2.10:1 */
+    border-color: var(--accent);        /* рамка остаётся золотой */
     transform: translateY(-2px);
 }
 
@@ -525,8 +537,9 @@ footer .social a:hover {
 
 /* Адаптивность */
 
-/* Планшет: 4 товара в две колонки, чтобы карточки не сжимались */
+/* Планшет: и товары, и преимущества — по две колонки, чтобы карточки не сжимались */
 @media (min-width: 769px) and (max-width: 1024px) {
+    .cards,
     .products .cards {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -568,6 +581,28 @@ footer .social a:hover {
     .cards,
     .products .cards {
         grid-template-columns: 1fr;
+    }
+
+    /* «Преимущества» на мобильных — горизонтальная карусель со снапом */
+    .advantages .cards {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 16px;
+        padding: 0 20px 20px;                 /* карточки не прилипают к краям */
+        -webkit-overflow-scrolling: touch;    /* плавный нативный скролл на iOS */
+        scrollbar-width: none;                /* Firefox: скрыть скроллбар */
+    }
+
+    .advantages .cards::-webkit-scrollbar {
+        display: none;                        /* Safari/Chrome: скрыть скроллбар */
+    }
+
+    .advantages .card {
+        flex: 0 0 80%;                        /* карточка — 80% ширины экрана */
+        scroll-snap-align: start;
+        margin: 0;
     }
     
     .grid {
@@ -648,5 +683,76 @@ header             { animation: header-drop-in 0.6s var(--ease-panel) 0.1s 1 bot
         animation: none;
         opacity: 0.9;
         transform: none;
+    }
+}
+
+/* ============================================================
+   Lenis (плавный скролл) — служебные правила библиотеки
+   ============================================================ */
+
+html.lenis,
+html.lenis body { height: auto; }
+
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ============================================================
+   Scroll-reveal: блоки секций выезжают снизу с лёгким blur,
+   карточки внутри секции — каскадом (stagger задаёт JS)
+   ============================================================ */
+
+/* Reveal двигает отдельное свойство `translate`, а hover карточек — `transform`:
+   иначе выезд снизу (translateY 40px → 0) и подъём -10px перебивали бы друг друга,
+   потому что .reveal.revealed и .card:hover имеют одинаковую специфичность.
+   В transition перечислены и reveal-свойства (0.8s), и hover-свойства (0.3s).
+   Это правило идёт после правил карточек, поэтому применяется именно оно. */
+.reveal {
+    opacity: 0;
+    translate: 0 40px;
+    filter: blur(8px);
+    transition: var(--card-transition);
+}
+
+.reveal.revealed {
+    opacity: 1;
+    translate: none;
+    filter: blur(0);
+}
+
+/* На мобильных — только проявление прозрачности, без сдвигов и blur */
+@media (max-width: 768px) {
+    .reveal {
+        translate: none;
+        filter: none;
+        transition: opacity 0.8s var(--ease-soft),
+                    transform 0.3s var(--ease-soft),
+                    box-shadow 0.3s var(--ease-soft),
+                    border-color 0.3s var(--ease-soft);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        translate: none;
+        filter: none;
+        transition: none;
+    }
+}
+
+/* ============================================================
+   Тач-устройства: hover-подъём карточек не применяем (скилл §5)
+   ============================================================ */
+
+@media (hover: none) {
+    .card:hover,
+    .grid-item:hover,
+    .products .card:hover {
+        transform: none;
+        box-shadow: var(--surface-sheen);
+        border-color: var(--surface-border);
     }
 }
