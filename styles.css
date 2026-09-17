@@ -149,7 +149,7 @@ header nav ul li a:hover::after {
     background: var(--bg);
     color: var(--text);
     text-align: center;
-    padding: 100px 20px;
+    padding: 100px 20px 60px;
     position: relative;
     overflow: hidden;
 }
@@ -224,6 +224,17 @@ header nav ul li a:hover::after {
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
     border: 1px solid var(--ghost);
+}
+
+/* Только карточки «Преимуществ»: у товаров padding не трогаем,
+   там от него зависит ширина фото */
+.advantages .card {
+    padding: 1.25rem;
+}
+
+/* Последний абзац в карточке не накидывает пустоту внизу */
+.advantages .card p:last-child {
+    margin-bottom: 0;
 }
 
 .card:hover {
@@ -331,20 +342,23 @@ header nav ul li a:hover::after {
 
 .btn-secondary {
     display: inline-block;
-    background: var(--bg-deep);
-    color: var(--text);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--accent);
     padding: 10px 25px;
     text-decoration: none;
     border-radius: 30px;
-    transition: background 0.3s, transform 0.3s;
-    border: 1px solid var(--ghost);
+    transition: background var(--dur-hover) var(--ease-soft),
+                color var(--dur-hover) var(--ease-soft),
+                border-color var(--dur-hover) var(--ease-soft),
+                transform var(--dur-hover) var(--ease-soft);
+    border: 1px solid var(--accent);
     margin-bottom: 15px;
     font-size: 0.9rem;
 }
 
 .btn-secondary:hover {
-    background: var(--ghost);
-    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--heading);
     transform: translateY(-2px);
 }
 
