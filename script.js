@@ -57,7 +57,7 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
         // Здесь можно отправить данные на сервер (например, через fetch/AJAX)
         // Для демонстрации просто покажем сообщение об успехе
         statusEl.textContent = 'Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.';
-        statusEl.style.color = '#4cc9f0';
+        statusEl.style.color = 'var(--accent)';
         this.reset();
         
         // Анимация успеха
@@ -72,7 +72,7 @@ function setError(inputElement, message) {
     formGroup.classList.add('error');
     const statusEl = document.getElementById('formStatus');
     statusEl.textContent = message;
-    statusEl.style.color = '#f72585';
+    statusEl.style.color = 'var(--error)';
     // Прокрутка к первой ошибке
     if (!window.__errorScrolled) {
         window.__errorScrolled = true;
@@ -166,8 +166,8 @@ style.textContent = `
     
     .form-group.error input,
     .form-group.error textarea {
-        border-color: #f72585 !important;
-        box-shadow: 0 0 0 2px rgba(247, 37, 133, 0.2);
+        border-color: var(--error) !important;
+        box-shadow: 0 0 0 2px rgba(186, 37, 37, 0.2);
     }
 `;
 document.head.appendChild(style);
