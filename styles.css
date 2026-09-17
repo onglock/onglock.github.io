@@ -9,11 +9,16 @@
     --bg-footer:  #050505;                  /* подвал и «дна» страницы */
     --text:       #E8E6E0;                  /* тёплый почти белый, для контраста */
     --heading:    #FFFFFF;                  /* только заголовки */
-    --accent:     #758251;                  /* оливково-шалфейный: один акцент */
-    --muted:      #A5A29C;                  /* подписи, второстепенный текст */
+    --accent:     #8B9A62;                  /* оливково-шалфейный: один акцент (осветлён под металлик) */
+    --muted:      #B8B5AE;                  /* подписи, второстепенный текст */
     --ghost:      rgba(232, 230, 224, 0.08);/* призрачные заголовки, тонкие рамки */
     --divider:    rgba(255, 255, 255, 0.35);/* разделители строк */
     --error:      #BA2525;                  /* ошибки формы */
+
+    /* Поверхность карточек: матовый металл (сталь с бликом) */
+    --surface:        linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0.15) 100%), #1D1F22;
+    --surface-border: rgba(232, 230, 224, 0.10);
+    --surface-sheen:  inset 0 1px 0 rgba(255, 255, 255, 0.12);
 
     /* Easing и тайминги */
     --ease-panel: cubic-bezier(0.44, 0, 0.56, 1);  /* шапка, маркиза, верхние полосы */
@@ -197,7 +202,7 @@ header nav ul li a:hover::after {
 
 .btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(117, 130, 81, 0.4);   /* var(--accent) в тени */
+    box-shadow: 0 10px 20px rgba(139, 154, 98, 0.4);   /* var(--accent) в тени */
 }
 
 /* Преимущества */
@@ -218,12 +223,13 @@ header nav ul li a:hover::after {
 }
 
 .card {
-    background: var(--bg);
+    background: var(--surface);
     border-radius: 15px;
     padding: 25px;
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
-    border: 1px solid var(--ghost);
+    border: 1px solid var(--surface-border);
+    box-shadow: var(--surface-sheen);
 }
 
 /* Только карточки «Преимуществ»: у товаров padding не трогаем,
@@ -239,7 +245,7 @@ header nav ul li a:hover::after {
 
 .card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--surface-sheen), 0 15px 30px rgba(0, 0, 0, 0.3);
     border-color: var(--accent);
 }
 
@@ -269,16 +275,17 @@ header nav ul li a:hover::after {
 .grid-item {
     display: block;
     text-decoration: none;
-    background: var(--bg-deep);
+    background: var(--surface);
     border-radius: 12px;
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
-    border: 1px solid var(--ghost);
+    border: 1px solid var(--surface-border);
+    box-shadow: var(--surface-sheen);
 }
 
 .grid-item:hover {
     transform: translateY(-8px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--surface-sheen), 0 10px 20px rgba(0, 0, 0, 0.3);
     border-color: var(--accent);
 }
 
@@ -313,7 +320,7 @@ header nav ul li a:hover::after {
 }
 
 .products .card {
-    background: var(--bg);
+    background: var(--surface);
     border-radius: 12px;
     overflow: hidden;
     text-align: center;
@@ -392,19 +399,30 @@ header nav ul li a:hover::after {
 .contacts h2 {
     text-align: center;
     margin-bottom: 40px;
+    grid-column: 1 / -1;   /* заголовок на всю ширину, иначе он занимает ячейку .info */
 }
 
 .contacts .container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
-    align-items: start;
+    align-items: stretch;   /* обе панели — одна высота */
 }
 
 .contacts form {
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+/* Панель формы заявки: та же металлическая поверхность, что у .info.
+   Поля внутри остаются на --bg — читаются как «врезанные в металл». */
+#contactForm {
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    box-shadow: var(--surface-sheen);
+    padding: 24px;
+    order: 2;              /* правая половина секции контактов */
 }
 
 .form-group {
@@ -438,6 +456,19 @@ header nav ul li a:hover::after {
     margin-top: 10px;
     min-height: 20px;
     color: var(--error);
+}
+
+/* Левая половина контактов — та же панель, что и у формы:
+   одинаковая высота, отступы и поверхность */
+.info {
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    box-shadow: var(--surface-sheen);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    order: 1;              /* левая половина секции контактов */
 }
 
 .info h3 {
