@@ -263,6 +263,7 @@ header nav ul li a:hover::after {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
+    align-items: start;   /* карточки не тянутся на высоту самой высокой */
 }
 
 .grid-item {
@@ -283,7 +284,8 @@ header nav ul li a:hover::after {
 
 .grid-item img {
     width: 100%;
-    height: auto;
+    height: 280px;
+    object-fit: cover;
     display: block;
 }
 
@@ -482,6 +484,10 @@ footer .social a:hover {
 
 /* Адаптивность */
 @media (max-width: 768px) {
+    .grid-item img {
+        height: 220px;
+    }
+    
     header .container {
         flex-direction: column;
         gap: 15px;
